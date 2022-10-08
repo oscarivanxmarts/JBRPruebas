@@ -1,0 +1,75 @@
+<openerp>
+	<data> 
+		<!--supplier/customer payment-->
+    	<record model="ir.ui.view" id="account_payment_form_inherit_imp">
+            <field name="name">account.payment.imp.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+				 <xpath expr="//group" position="after">
+					<notebook > 
+						<page string="Invoice Lines" >
+							<group>
+                                <button name="update_invoice_lines" string="Update Invoice" type="object" class="oe_link" attrs="{'invisible':[('state', '=', 'posted')]}"/> 
+                                <button name="clean_lines_invoices" string="Remove lines" type="object" class="oe_link" attrs="{'invisible':[('state', '=', 'posted')]}"/> 
+                            </group>
+							<field name="multipagos" invisible="1"/> 
+							<field name="invoice_lines">  <!-- attrs="{'readonly':[('state', '!=', 'draft')]}" -->
+								<tree create="false" editable="bottom">	
+									<field name="check_line" nolabel="1"/>	
+									<field name="invoice_id"/>
+									<!-- <field name="account_id" invisible="1"/> -->
+									<field name="invoice" invisible="1"/> 
+									<field name="invoice_line_id" invisible="1"/>
+									<field name="date" readonly="True"/> 
+									<field name="due_date" readonly="True"/>
+									<field name="total_amount" readonly="True" sum="Total Amount"/> 
+									<field name="open_amount" readonly="True" sum="Due Amount"/> 
+									<field name="allocation" sum="Allocated Amount"/>
+									<field name="account_move_line_id" invisible="1"/>
+								</tree>
+								<form string="Invoice" create="false">
+									<group>
+										<field name="invoice_id"/>
+										<field name="invoice"/>
+										<field name="invoice_line_id"/>
+										<field name="date" readonly="True"/>  
+										<field name="due_date" readonly="True"/>
+										<field name="total_amount" readonly="True"/> 
+										<field name="open_amount" readonly="True"/> 
+										<field name="allocation" />
+
+									</group>
+								</form>
+							</field>
+							 	
+						</page> 
+					</notebook> 
+				</xpath> 
+			</field>
+    	</record>  
+    	<record model="ir.ui.view" id="account_move_line_inherit">
+            <field name="name">account.move.line.list</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree_grouped"/>
+            <field name="arch" type="xml">
+				 <xpath expr="//field[@name='amount_currency']" position="after">					
+				 <field name="invoice_id"/>										
+				</xpath> 
+			</field>
+    	</record> 
+    	 <record id="account_move_payment" model="ir.ui.view">
+            <field name="name">account.move.payment</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">               
+                <xpath expr="//button[@name='action_register_payment']" position="inside">
+                <button name="action_invoice_register_payment" groups="account.group_account_invoice"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='name']" position="after">					
+				 <field name="invoice_id"/>										
+				</xpath>
+            </field>
+        </record>
+	</data>
+</openerp>
